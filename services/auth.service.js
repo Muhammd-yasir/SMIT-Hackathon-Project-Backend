@@ -25,11 +25,11 @@ const userSignUpService = async (body) => {
 
     await User.create({ email, password: hashedPassword });
 
-    await sendMail(
-        email,
-        Onboard.subject,
-        Onboard.text
-    );
+    // await sendMail(
+    //     email,
+    //     Onboard.subject,
+    //     Onboard.text
+    // );
 
     return {
         status: 201,
