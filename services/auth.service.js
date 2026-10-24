@@ -5,7 +5,7 @@ const sendMail = require("../lib/helpers/email");
 const { Onboard } = require("../lib/emailTemplates/auth.template");
 const { OTP } = require("otplib");
 const getMinutes = require("../lib/helpers/getMins");
-const User = require("../models/user.model");
+const User = require("../models/auth.model");
 const Otp = require("../models/otp.model");
 
 // SIGN-UP
