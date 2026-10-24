@@ -1,6 +1,11 @@
 
 const { Router } = require("express");
 const authMiddleware = require("../middleware/auth.middleware");
+const validationMiddleware = require("../middleware/validation.middleware");
+
+const {
+  actorIdParamSchema,
+} = require("../validations/audit.validation");
 
 const {
   getAllAuditLogsController,
@@ -9,7 +14,6 @@ const {
 
 const auditRouter = Router();
 
-// Only ADMIN users can view audit logs
 function adminOnly(req, res, next) {
   if (req.user.role !== "ADMIN") {
     return res.status(403).json({
@@ -20,7 +24,6 @@ function adminOnly(req, res, next) {
   next();
 }
 
-// Get all audit logs
 auditRouter.get(
   "/",
   authMiddleware,
@@ -28,11 +31,11 @@ auditRouter.get(
   getAllAuditLogsController
 );
 
-// Get audit logs for a specific user
 auditRouter.get(
   "/actor/:actorId",
   authMiddleware,
   adminOnly,
+  validationMiddleware(actorIdParamSchema, "params"),
   getAuditLogsByActorController
 );
 

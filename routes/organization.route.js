@@ -1,6 +1,12 @@
 
 const { Router } = require("express");
 const authMiddleware = require("../middleware/auth.middleware");
+const validationMiddleware = require("../middleware/validation.middleware");
+
+const {
+  createOrganizationSchema,
+  updateOrganizationSchema,
+} = require("../validations/organization.validation");
 
 const {
   createOrganizationController,
@@ -10,24 +16,23 @@ const {
 
 const organizationRouter = Router();
 
-// Create an organization
 organizationRouter.post(
   "/",
   authMiddleware,
+  validationMiddleware(createOrganizationSchema),
   createOrganizationController
 );
 
-// Get the logged-in user's organization
 organizationRouter.get(
   "/",
   authMiddleware,
   getOrganizationController
 );
 
-// Update the logged-in user's organization
 organizationRouter.patch(
   "/",
   authMiddleware,
+  validationMiddleware(updateOrganizationSchema),
   updateOrganizationController
 );
 

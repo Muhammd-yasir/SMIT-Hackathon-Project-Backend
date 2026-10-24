@@ -27,23 +27,12 @@ async function checkInService(employeeId) {
   }
 
   if (employee.employmentStatus !== "ACTIVE") {
-    const error = new Error("Attendance cannot be recorded for an inactive employee.");
+    const error = new Error("Cannot record attendance for an inactive employee.");
     error.statusCode = 400;
     throw error;
   }
 
   const date = getTodayDate();
-
-  const existingAttendance = await Attendance.findOne({
-    employee: employeeId,
-    date,
-  });
-
-  if (existingAttendance) {
-    const error = new Error("Attendance has already been recorded for today.");
-    error.statusCode = 409;
-    throw error;
-  }
 
   try {
     return await Attendance.create({
@@ -53,7 +42,6 @@ async function checkInService(employeeId) {
       status: "PRESENT",
     });
   } catch (error) {
-    // Handles simultaneous requests caught by the unique database index.
     if (error.code === 11000) {
       const duplicateError = new Error(
         "Attendance has already been recorded for today."
@@ -67,22 +55,14 @@ async function checkInService(employeeId) {
 }
 
 async function checkOutService(employeeId) {
-  const date = getTodayDate();
-
   const attendance = await Attendance.findOne({
     employee: employeeId,
-    date,
+    date: getTodayDate(),
   });
 
   if (!attendance) {
     const error = new Error("No attendance record found for today.");
     error.statusCode = 404;
-    throw error;
-  }
-
-  if (!attendance.checkIn) {
-    const error = new Error("Employee must check in before checking out.");
-    error.statusCode = 400;
     throw error;
   }
 
